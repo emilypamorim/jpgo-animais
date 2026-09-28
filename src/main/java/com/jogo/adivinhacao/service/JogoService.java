@@ -1,6 +1,7 @@
 package com.jogo.adivinhacao.service;
 
 import com.jogo.adivinhacao.dto.AprenderDTO;
+import com.jogo.adivinhacao.dto.RespostaJogadorDTO;
 import com.jogo.adivinhacao.dto.RespostaJogoDTO;
 import com.jogo.adivinhacao.model.No;
 import com.jogo.adivinhacao.model.Partida;
@@ -49,10 +50,18 @@ public class JogoService {
     }
 
     @Transactional
-    public RespostaJogoDTO iniciarPartida() {
+    public RespostaJogoDTO iniciarPartida(RespostaJogadorDTO dto) {
+        String jogador = normalizarJogador(dto.getJogador());
         No raiz = buscarNo(raizGlobalId);
-        Partida partida = partidaRepository.save(new Partida(raizGlobalId, raizGlobalId));
+        Partida partida = partidaRepository.save(new Partida(jogador, raizGlobalId, raizGlobalId));
         return new RespostaJogoDTO("pergunta", raiz.getDado(), partida.getId());
+    }
+
+    private String normalizarJogador(String bruto) {
+        if (bruto == null || bruto.trim().isEmpty()) {
+            throw new IllegalStateException("Informe um apelido para jogar.");
+        }
+        return bruto.trim().toLowerCase();
     }
 
     @Transactional
@@ -72,10 +81,17 @@ public class JogoService {
 
         No proximo = buscarNo(proximoId);
         partida.setNoAtualId(proximo.getId());
+        partida.setPerguntasCount(partida.getPerguntasCount() + 1);
+
+        Integer pontos = null;
+        String tipo = proximo.ehFolha() ? "adivinhacao" : "pergunta";
+        if (proximo.ehFolha()) {
+            pontos = Math.max(0, 15 - partida.getPerguntasCount());
+            partida.setPontos(pontos);
+        }
         partidaRepository.save(partida);
 
-        String tipo = proximo.ehFolha() ? "adivinhacao" : "pergunta";
-        return new RespostaJogoDTO(tipo, proximo.getDado());
+        return new RespostaJogoDTO(tipo, proximo.getDado(), pontos);
     }
 
 
@@ -114,6 +130,7 @@ public class JogoService {
 
         noRepository.save(folhaErro);
 
+        partida.setPontos(null);
         partida.setNoAtualId(raizGlobalId);
         partidaRepository.save(partida);
     }

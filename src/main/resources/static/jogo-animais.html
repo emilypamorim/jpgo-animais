@@ -313,7 +313,10 @@
     <div class="pergaminho-titulo">PENSE EM UM ANIMAL</div>
     <div class="pergaminho-divisor">&#9670;</div>
     <p class="pergaminho-sub">Quando estiver pronto, comece e responderei apenas com sim ou nao.</p>
-    <button class="btn-pixel" onclick="iniciarPartida()"><span class="star">+</span> COMECAR <span class="star">+</span></button>
+    <label class="pergaminho-label" style="text-align:left">Seu apelido</label>
+    <input class="campo" id="apelido" type="text" maxlength="20" placeholder="Ex: Ana" style="text-align:left">
+    <div class="erro" id="erro-iniciar"></div>
+    <button class="btn-pixel" onclick="iniciarPartida()" style="margin-top:1.25rem"><span class="star">+</span> COMECAR <span class="star">+</span></button>
   </div>
 </div>
 
@@ -389,6 +392,9 @@
     <svg class="coelho" width="56" height="56"><use href="#coelho"/></svg>
     <div class="pergaminho-titulo">SABIA QUE ERA!</div>
     <div class="pergaminho-divisor">&#9670;</div>
+    <div class="animal-destaque" id="seus-pontos" style="display:none"></div>
+    <div class="pergaminho-eyebrow" style="margin-top:1rem">— ranking —</div>
+    <div id="ranking-final" style="text-align:left;font-size:0.95rem;line-height:1.7;margin:0.5rem 0 1rem"></div>
     <p class="pergaminho-sub">Quer tentar de novo?</p>
     <button class="btn-pixel" onclick="mostrarTela('wrap-inicial')"><span class="star">+</span> DE NOVO <span class="star">+</span></button>
   </div>
@@ -410,9 +416,11 @@
 </div>
 
 <script>
-  const API = 'http://localhost:8080';
+  const API = '';
   let partidaId = null;
   let respostaAprender = null;
+  let pontosAtual = null;
+  let apelidoAtual = null;
 
   const telas = ['wrap-inicial','wrap-pergunta','wrap-adivinhacao','wrap-aprender','wrap-acertou','wrap-aprendeu'];
 
@@ -422,14 +430,36 @@
   }
 
   async function iniciarPartida() {
-    const res = await fetch(`${API}/partida`, { method: 'POST' });
+    const erroEl = document.getElementById('erro-iniciar');
+    const bruto = document.getElementById('apelido').value;
+    if (!bruto.trim()) {
+      erroEl.textContent = 'Digite seu apelido para jogar.';
+      erroEl.style.display = 'block';
+      return;
+    }
+    erroEl.style.display = 'none';
+    apelidoAtual = bruto.trim().toLowerCase();
+
+    const res = await fetch(`${API}/partida`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ jogador: apelidoAtual })
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      erroEl.textContent = data.erro || 'Erro ao iniciar partida.';
+      erroEl.style.display = 'block';
+      return;
+    }
     const data = await res.json();
     partidaId = data.partidaId;
+    pontosAtual = null;
     if (data.tipo === 'pergunta') {
       document.getElementById('texto-pergunta').textContent = data.conteudo;
       mostrarTela('wrap-pergunta');
     } else {
       document.getElementById('texto-animal').textContent = data.conteudo;
+      pontosAtual = data.pontos;
       mostrarTela('wrap-adivinhacao');
     }
   }
@@ -446,11 +476,41 @@
       mostrarTela('wrap-pergunta');
     } else {
       document.getElementById('texto-animal').textContent = data.conteudo;
+      pontosAtual = data.pontos;
       mostrarTela('wrap-adivinhacao');
     }
   }
 
-  function acertou() { mostrarTela('wrap-acertou'); }
+  async function carregarRanking(containerId, destaque) {
+    const container = document.getElementById(containerId);
+    try {
+      const res = await fetch(`${API}/ranking`);
+      const lista = await res.json();
+      if (!lista.length) {
+        container.innerHTML = '<p class="pergaminho-sub" style="text-align:center">Ninguem pontuou ainda.</p>';
+        return;
+      }
+      container.innerHTML = '<ol style="padding-left:1.25rem;margin:0">'
+        + lista.map((r, i) =>
+          `<li style="${destaque && r.jogador === destaque ? 'font-weight:700;color:#7a5020' : ''}">${r.jogador} — ${r.pontos} pts</li>`
+        ).join('')
+        + '</ol>';
+    } catch (e) {
+      container.innerHTML = '<p class="pergaminho-sub" style="text-align:center">Ranking indisponivel.</p>';
+    }
+  }
+
+  function acertou() {
+    const el = document.getElementById('seus-pontos');
+    if (pontosAtual !== null && pontosAtual !== undefined) {
+      el.textContent = `Seus pontos: ${pontosAtual}`;
+      el.style.display = 'block';
+    } else {
+      el.style.display = 'none';
+    }
+    carregarRanking('ranking-final', apelidoAtual);
+    mostrarTela('wrap-acertou');
+  }
 
   function mostrarAprender() {
     respostaAprender = null;

@@ -18,8 +18,8 @@ public class JogoController {
     }
 
     @PostMapping
-    public ResponseEntity<RespostaJogoDTO> iniciarPartida() {
-        RespostaJogoDTO resposta = jogoService.iniciarPartida();
+    public ResponseEntity<RespostaJogoDTO> iniciarPartida(@RequestBody RespostaJogadorDTO dto) {
+        RespostaJogoDTO resposta = jogoService.iniciarPartida(dto);
         return ResponseEntity.ok(resposta);
     }
 
