@@ -20,10 +20,9 @@ public class RankingController {
 
     @GetMapping("/ranking")
     public List<RankingDTO> ranking() {
-        return partidaRepository
-                .findTop10ByPontosIsNotNullOrderByPontosDescCriadoEmAsc()
+        return partidaRepository.findRanking()
                 .stream()
-                .map(p -> new RankingDTO(p.getJogador(), p.getPontos()))
+                .limit(10)
                 .toList();
     }
 }
