@@ -75,9 +75,9 @@ public class JogoService {
         No raiz = buscarNo(raizGlobalId);
         Partida partida = partidaRepository.save(new Partida(jogador, raizGlobalId, raizGlobalId));
 
-        Integer melhorPontos = partidaRepository.findMelhorPontos(jogador);
-        boolean recorrente = melhorPontos != null;
-        return new RespostaJogoDTO("pergunta", raiz.getDado(), partida.getId(), recorrente, melhorPontos);
+        Long pontosAcumulados = partidaRepository.findPontosAcumulados(jogador);
+        boolean recorrente = pontosAcumulados != null;
+        return new RespostaJogoDTO("pergunta", raiz.getDado(), partida.getId(), recorrente, pontosAcumulados);
     }
 
     private String normalizarJogador(String bruto) {

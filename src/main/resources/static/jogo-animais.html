@@ -457,7 +457,7 @@
     pontosAtual = null;
     const bv = document.getElementById('boas-vindas');
     if (data.jogadorRecorrente) {
-      bv.textContent = `Bem-vindo de volta, ${apelidoAtual}! Seu recorde: ${data.melhorPontos} pts`;
+      bv.textContent = `Bem-vindo de volta, ${apelidoAtual}! Você já tem ${data.pontosAcumulados} pts`;
       bv.style.display = 'block';
     } else {
       bv.style.display = 'none';

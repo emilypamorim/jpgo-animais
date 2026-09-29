@@ -10,7 +10,7 @@ public class RespostaJogoDTO {
     private String partidaId;
     private Integer pontos;
     private Boolean jogadorRecorrente;
-    private Integer melhorPontos;
+    private Long pontosAcumulados;
 
     public RespostaJogoDTO() {}
 
@@ -32,12 +32,12 @@ public class RespostaJogoDTO {
     }
 
     public RespostaJogoDTO(String tipo, String conteudo, String partidaId,
-                           Boolean jogadorRecorrente, Integer melhorPontos) {
+                           Boolean jogadorRecorrente, Long pontosAcumulados) {
         this.tipo = tipo;
         this.conteudo = conteudo;
         this.partidaId = partidaId;
         this.jogadorRecorrente = jogadorRecorrente;
-        this.melhorPontos = melhorPontos;
+        this.pontosAcumulados = pontosAcumulados;
     }
 
     public String getTipo() { return tipo; }
@@ -45,5 +45,5 @@ public class RespostaJogoDTO {
     public String getPartidaId() { return partidaId; }
     public Integer getPontos() { return pontos; }
     public Boolean getJogadorRecorrente() { return jogadorRecorrente; }
-    public Integer getMelhorPontos() { return melhorPontos; }
+    public Long getPontosAcumulados() { return pontosAcumulados; }
 }

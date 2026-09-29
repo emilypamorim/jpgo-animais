@@ -3,11 +3,11 @@ package com.jogo.adivinhacao.dto;
 public class RankingDTO {
 
     private String jogador;
-    private Integer pontos;
+    private Long pontos;
 
     public RankingDTO() {}
 
-    public RankingDTO(String jogador, Integer pontos) {
+    public RankingDTO(String jogador, Long pontos) {
         this.jogador = jogador;
         this.pontos = pontos;
     }
