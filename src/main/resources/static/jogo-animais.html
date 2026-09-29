@@ -393,8 +393,6 @@
     <svg class="coelho" width="56" height="56"><use href="#coelho"/></svg>
     <div class="pergaminho-titulo">SABIA QUE ERA!</div>
     <div class="pergaminho-divisor">&#9670;</div>
-    <div class="pergaminho-eyebrow">caminho na arvore</div>
-    <div id="caminho-final" style="text-align:left;font-size:0.88rem;line-height:1.9;margin:0.5rem 0 1rem;color:#4a3520"></div>
     <div class="animal-destaque" id="seus-pontos" style="display:none"></div>
     <div class="pergaminho-eyebrow" style="margin-top:1rem">ranking</div>
     <div id="ranking-final" style="text-align:left;font-size:0.95rem;line-height:1.7;margin:0.5rem 0 1rem"></div>
@@ -523,26 +521,9 @@
     } else {
       el.style.display = 'none';
     }
-    renderizarCaminho();
     fetch(`${API}/partida/${partidaId}/confirmar`, { method: 'POST' }).catch(() => {});
     carregarRanking('ranking-final', apelidoAtual);
     mostrarTela('wrap-acertou');
-  }
-
-  function renderizarCaminho() {
-    const el = document.getElementById('caminho-final');
-    if (!caminho.length) {
-      el.style.display = 'none';
-      return;
-    }
-    let html = '';
-    caminho.forEach((c, i) => {
-      const seta = c.resposta === 's' ? 'SIM' : 'N\u00c3O';
-      const prefixo = i === 0 ? '' : '&nbsp;&nbsp;'.repeat(i) + '\u2514 ';
-      html += `<div style="padding-left:${i * 8}px">${prefixo}${c.pergunta} \u2192 <b>${seta}</b></div>`;
-    });
-    el.innerHTML = html;
-    el.style.display = 'block';
   }
 
   function mostrarAprender() {
