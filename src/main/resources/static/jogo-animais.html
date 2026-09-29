@@ -250,8 +250,8 @@
       display: none;
     }
 
-    /* ── REGRAS DE PONTUACAO ── */
-    .regras-pontuacao {
+    /* ── REGRAS DE PONTUACAO (accordion) ── */
+    details.regras-detalhes {
       background: #fffaec;
       border: 3px solid #b8843a;
       box-shadow: inset 2px 2px 0 #d4a855, inset -2px -2px 0 #d4a855;
@@ -260,15 +260,29 @@
       text-align: left;
     }
 
-    .regras-titulo {
+    details.regras-detalhes summary {
       font-family: 'Press Start 2P', monospace;
       font-size: 8px;
       color: #7a5020;
       text-align: center;
       letter-spacing: 2px;
-      border-bottom: 2px dotted #c8a860;
-      padding-bottom: 7px;
-      margin-bottom: 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    details.regras-detalhes summary::after {
+      content: '+';
+      float: right;
+      color: #2e6a12;
+      font-size: 11px;
+    }
+
+    details.regras-detalhes[open] summary::after {
+      content: '\2212';
+    }
+
+    details.regras-detalhes summary::marker {
+      content: '';
     }
 
     .regra {
@@ -371,8 +385,8 @@
     <div class="pergaminho-titulo">PENSE EM UM ANIMAL</div>
     <div class="pergaminho-divisor">&#9670;</div>
     <p class="pergaminho-sub">Quando estiver pronto, comece e responderei apenas com sim ou nao.</p>
-    <div class="regras-pontuacao">
-      <div class="regras-titulo">COMO PONTUAR</div>
+    <details class="regras-detalhes">
+      <summary>COMO PONTUAR</summary>
       <div class="regra">
         <span class="regra-nome">acerto (ela descobriu seu animal)</span>
         <span class="regra-linha"></span>
@@ -389,9 +403,9 @@
         <span class="regra-linha"></span>
         <span class="regra-pontos">soma</span>
       </div>
-    </div>
+    </details>
     <label class="pergaminho-label" style="text-align:left">Seu apelido</label>
-    <input class="campo" id="apelido" type="text" maxlength="20" placeholder="Ex: Ana" style="text-align:left">
+    <input class="campo" id="apelido" type="text" maxlength="20" placeholder="Ex: Ana" style="text-align:left" autofocus>
     <div class="erro" id="erro-iniciar"></div>
     <button class="btn-pixel" onclick="iniciarPartida()" style="margin-top:1.25rem"><span class="star">+</span> COMECAR <span class="star">+</span></button>
   </div>
@@ -500,6 +514,7 @@
   let pontosAtual = null;
   let apelidoAtual = null;
   let caminho = [];
+  let aguardandoServidor = false;
 
   const telas = ['wrap-inicial','wrap-pergunta','wrap-adivinhacao','wrap-aprender','wrap-acertou','wrap-aprendeu'];
 
@@ -509,65 +524,77 @@
   }
 
   async function iniciarPartida() {
-    const erroEl = document.getElementById('erro-iniciar');
-    const bruto = document.getElementById('apelido').value;
-    if (!bruto.trim()) {
-      erroEl.textContent = 'Digite seu apelido para jogar.';
-      erroEl.style.display = 'block';
-      return;
-    }
-    erroEl.style.display = 'none';
-    apelidoAtual = bruto.trim().toLowerCase();
+    if (aguardandoServidor) return;
+    aguardandoServidor = true;
+    try {
+      const erroEl = document.getElementById('erro-iniciar');
+      const bruto = document.getElementById('apelido').value;
+      if (!bruto.trim()) {
+        erroEl.textContent = 'Digite seu apelido para jogar.';
+        erroEl.style.display = 'block';
+        return;
+      }
+      erroEl.style.display = 'none';
+      apelidoAtual = bruto.trim().toLowerCase();
 
-    const res = await fetch(`${API}/partida`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ jogador: apelidoAtual })
-    });
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      erroEl.textContent = data.erro || 'Erro ao iniciar partida.';
-      erroEl.style.display = 'block';
-      return;
-    }
-    const data = await res.json();
-    partidaId = data.partidaId;
-    pontosAtual = null;
-    caminho = [];
-    const bv = document.getElementById('boas-vindas');
-    if (data.jogadorRecorrente) {
-      bv.textContent = `Bem-vindo de volta, ${apelidoAtual}! Você já tem ${data.pontosAcumulados} pts`;
-      bv.style.display = 'block';
-    } else {
-      bv.style.display = 'none';
-    }
-    if (data.tipo === 'pergunta') {
-      document.getElementById('texto-pergunta').textContent = data.conteudo;
-      mostrarTela('wrap-pergunta');
-    } else {
-      document.getElementById('texto-animal').textContent = data.conteudo;
-      pontosAtual = data.pontos;
-      mostrarTela('wrap-adivinhacao');
+      const res = await fetch(`${API}/partida`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ jogador: apelidoAtual })
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        erroEl.textContent = data.erro || 'Erro ao iniciar partida.';
+        erroEl.style.display = 'block';
+        return;
+      }
+      const data = await res.json();
+      partidaId = data.partidaId;
+      pontosAtual = null;
+      caminho = [];
+      const bv = document.getElementById('boas-vindas');
+      if (data.jogadorRecorrente) {
+        bv.textContent = `Bem-vindo de volta, ${apelidoAtual}! Você já tem ${data.pontosAcumulados} pts`;
+        bv.style.display = 'block';
+      } else {
+        bv.style.display = 'none';
+      }
+      if (data.tipo === 'pergunta') {
+        document.getElementById('texto-pergunta').textContent = data.conteudo;
+        mostrarTela('wrap-pergunta');
+      } else {
+        document.getElementById('texto-animal').textContent = data.conteudo;
+        pontosAtual = data.pontos;
+        mostrarTela('wrap-adivinhacao');
+      }
+    } finally {
+      aguardandoServidor = false;
     }
   }
 
   async function responder(resp) {
+    if (aguardandoServidor) return;
+    aguardandoServidor = true;
     const perguntaAtual = document.getElementById('texto-pergunta').textContent;
-    const res = await fetch(`${API}/partida/${partidaId}/resposta`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ resposta: resp })
-    });
-    const data = await res.json();
-    if (!res.ok) return;
-    caminho.push({ pergunta: perguntaAtual, resposta: resp });
-    if (data.tipo === 'pergunta') {
-      document.getElementById('texto-pergunta').textContent = data.conteudo;
-      mostrarTela('wrap-pergunta');
-    } else {
-      document.getElementById('texto-animal').textContent = data.conteudo;
-      pontosAtual = data.pontos;
-      mostrarTela('wrap-adivinhacao');
+    try {
+      const res = await fetch(`${API}/partida/${partidaId}/resposta`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ resposta: resp })
+      });
+      const data = await res.json();
+      if (!res.ok) return;
+      caminho.push({ pergunta: perguntaAtual, resposta: resp });
+      if (data.tipo === 'pergunta') {
+        document.getElementById('texto-pergunta').textContent = data.conteudo;
+        mostrarTela('wrap-pergunta');
+      } else {
+        document.getElementById('texto-animal').textContent = data.conteudo;
+        pontosAtual = data.pontos;
+        mostrarTela('wrap-adivinhacao');
+      }
+    } finally {
+      aguardandoServidor = false;
     }
   }
 
@@ -641,6 +668,10 @@ async function enviarAprender() {
 
   mostrarTela('wrap-aprendeu');
 }
+
+  document.getElementById('apelido').addEventListener('keyup', e => {
+    if (e.key === 'Enter') iniciarPartida();
+  });
 </script>
 </body>
 </html>
