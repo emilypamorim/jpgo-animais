@@ -393,6 +393,8 @@
     <svg class="coelho" width="56" height="56"><use href="#coelho"/></svg>
     <div class="pergaminho-titulo">SABIA QUE ERA!</div>
     <div class="pergaminho-divisor">&#9670;</div>
+    <div class="pergaminho-eyebrow">— caminho na arvore —</div>
+    <div id="caminho-final" style="text-align:left;font-size:0.88rem;line-height:1.9;margin:0.5rem 0 1rem;color:#4a3520"></div>
     <div class="animal-destaque" id="seus-pontos" style="display:none"></div>
     <div class="pergaminho-eyebrow" style="margin-top:1rem">— ranking —</div>
     <div id="ranking-final" style="text-align:left;font-size:0.95rem;line-height:1.7;margin:0.5rem 0 1rem"></div>
@@ -422,6 +424,7 @@
   let respostaAprender = null;
   let pontosAtual = null;
   let apelidoAtual = null;
+  let caminho = [];
 
   const telas = ['wrap-inicial','wrap-pergunta','wrap-adivinhacao','wrap-aprender','wrap-acertou','wrap-aprendeu'];
 
@@ -455,6 +458,7 @@
     const data = await res.json();
     partidaId = data.partidaId;
     pontosAtual = null;
+    caminho = [];
     const bv = document.getElementById('boas-vindas');
     if (data.jogadorRecorrente) {
       bv.textContent = `Bem-vindo de volta, ${apelidoAtual}! Você já tem ${data.pontosAcumulados} pts`;
@@ -473,12 +477,15 @@
   }
 
   async function responder(resp) {
+    const perguntaAtual = document.getElementById('texto-pergunta').textContent;
     const res = await fetch(`${API}/partida/${partidaId}/resposta`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ resposta: resp })
     });
     const data = await res.json();
+    if (!res.ok) return;
+    caminho.push({ pergunta: perguntaAtual, resposta: resp });
     if (data.tipo === 'pergunta') {
       document.getElementById('texto-pergunta').textContent = data.conteudo;
       mostrarTela('wrap-pergunta');
@@ -511,14 +518,31 @@
   function acertou() {
     const el = document.getElementById('seus-pontos');
     if (pontosAtual !== null && pontosAtual !== undefined) {
-      el.textContent = `Seus pontos: ${pontosAtual}`;
+      el.textContent = `Seus pontos: ${pontosAtual} (${caminho.length} no${caminho.length > 1 ? 's' : ''} percorridos${caminho.length > 1 ? '' : ' \u2014 pura sorte!'})`;
       el.style.display = 'block';
     } else {
       el.style.display = 'none';
     }
+    renderizarCaminho();
     fetch(`${API}/partida/${partidaId}/confirmar`, { method: 'POST' }).catch(() => {});
     carregarRanking('ranking-final', apelidoAtual);
     mostrarTela('wrap-acertou');
+  }
+
+  function renderizarCaminho() {
+    const el = document.getElementById('caminho-final');
+    if (!caminho.length) {
+      el.style.display = 'none';
+      return;
+    }
+    let html = '';
+    caminho.forEach((c, i) => {
+      const seta = c.resposta === 's' ? 'SIM' : 'N\u00c3O';
+      const prefixo = i === 0 ? '' : '&nbsp;&nbsp;'.repeat(i) + '\u2514 ';
+      html += `<div style="padding-left:${i * 8}px">${prefixo}${c.pergunta} \u2192 <b>${seta}</b></div>`;
+    });
+    el.innerHTML = html;
+    el.style.display = 'block';
   }
 
   function mostrarAprender() {
