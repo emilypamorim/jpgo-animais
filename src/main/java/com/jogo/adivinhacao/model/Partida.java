@@ -29,6 +29,8 @@ public class Partida {
     @Column(nullable = false)
     private LocalDateTime criadoEm;
 
+    private String caminho;
+
     public Partida() {}
 
     public Partida(String jogador, Long raizId, Long noAtualId) {
@@ -37,6 +39,7 @@ public class Partida {
         this.noAtualId = noAtualId;
         this.perguntasCount = 0;
         this.criadoEm = LocalDateTime.now();
+        this.caminho = String.valueOf(raizId);
     }
 
     public String getId() { return id; }
@@ -46,8 +49,10 @@ public class Partida {
     public int getPerguntasCount() { return perguntasCount; }
     public Integer getPontos() { return pontos; }
     public LocalDateTime getCriadoEm() { return criadoEm; }
+    public String getCaminho() { return caminho; }
 
     public void setNoAtualId(Long noAtualId) { this.noAtualId = noAtualId; }
     public void setPerguntasCount(int perguntasCount) { this.perguntasCount = perguntasCount; }
     public void setPontos(Integer pontos) { this.pontos = pontos; }
+    public void setCaminho(String caminho) { this.caminho = caminho; }
 }

@@ -105,6 +105,8 @@ public class JogoService {
         No proximo = buscarNo(proximoId);
         partida.setNoAtualId(proximo.getId());
         partida.setPerguntasCount(partida.getPerguntasCount() + 1);
+        partida.setCaminho(partida.getCaminho() + ";" + proximo.getId() + ":"
+                + (resposta.equalsIgnoreCase("s") ? "s" : "n"));
 
         Integer pontos = null;
         String tipo = proximo.ehFolha() ? "adivinhacao" : "pergunta";
@@ -169,6 +171,7 @@ public class JogoService {
         // Ensinar (desafiar a máquina) pontua com bônus fixo
         partida.setPontos(PONTOS_ENSINAR);
         partida.setNoAtualId(raizGlobalId);
+        partida.setCaminho(String.valueOf(raizGlobalId));
         partidaRepository.save(partida);
     }
 
