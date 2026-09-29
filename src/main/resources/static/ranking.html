@@ -67,16 +67,72 @@
       text-align: center;
       line-height: 1.8;
     }
+
+    .regras-cards {
+      display: flex;
+      gap: 0.8rem;
+      margin-bottom: 1.6rem;
+      width: 100%;
+      max-width: 700px;
+    }
+
+    .regra-card {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      background: #243c24;
+      border: 3px solid #4a6a3a;
+      border-radius: 6px;
+      padding: 0.8rem 0.6rem;
+      text-align: center;
+    }
+
+    .regra-card-nome {
+      font-size: clamp(9px, 1.1vw, 12px);
+      color: #b8c4a0;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .regra-card-valor {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(11px, 1.6vw, 15px);
+      color: #d4a855;
+    }
+
+    .regra-card-valor.verde { color: #a8d08a; }
+
+    .regra-card-sub {
+      font-size: clamp(8px, 1vw, 11px);
+      color: #6a7a6a;
+      line-height: 1.5;
+    }
   </style>
 </head>
 <body>
   <h1>&#9670; RANKING &#9670;</h1>
-  <div id="ranking"><p class="vazio">Carregando...</p></div>
 
-  <p class="regras">
-    Acerto = a maquina descobriu o seu animal: ate 14 pts (15 - perguntas) &bull;
-    Errou? ensine um animal novo: +7 pts &bull; O placar soma todas as partidas
-  </p>
+  <div class="regras-cards">
+    <div class="regra-card">
+      <span class="regra-card-nome">acerto</span>
+      <span class="regra-card-valor">ate 14</span>
+      <span class="regra-card-sub">a maquina descobriu seu animal (15 - perguntas)</span>
+    </div>
+    <div class="regra-card">
+      <span class="regra-card-nome">engano + ensinar</span>
+      <span class="regra-card-valor verde">+7</span>
+      <span class="regra-card-sub">ensine um animal novo</span>
+    </div>
+    <div class="regra-card">
+      <span class="regra-card-nome">jogue de novo</span>
+      <span class="regra-card-valor">soma</span>
+      <span class="regra-card-sub">o placar acumula suas partidas</span>
+    </div>
+  </div>
+
+  <div id="ranking"><p class="vazio">Carregando...</p></div>
 
   <script>
     const API = '';
