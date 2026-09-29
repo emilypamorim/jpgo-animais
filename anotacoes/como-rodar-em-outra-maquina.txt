@@ -1,0 +1,101 @@
+════════════════════════════════════════════════════════════════════
+  COMO RODAR O JOGO EM OUTRA MAQUINA
+════════════════════════════════════════════════════════════════════
+
+REQUISITOS
+  - Java 17 ou superior (só na maquina que roda o SERVIDOR)
+  - As outras maquinas so precisam de NAVEGADOR
+
+── 1. BAIXAR O CODIGO ──────────────────────────────────────────────
+
+  git clone https://github.com/emilypamorim/jpgo-animais.git
+  cd jpgo-animais
+
+  (se ja tem a pasta, atualize:)
+  git pull
+
+── 2. COMPILAR ─────────────────────────────────────────────────────
+
+  mvn clean package -DskipTests
+
+  Deve terminar com BUILD SUCCESS.
+  Se der BUILD FAILURE: o codigo esta quebrado ou o pull nao foi feito.
+  REGRA DE OURO: depois de todo git pull, RODE o mvn package de novo.
+  O jar e uma foto do codigo no momento da compilacao.
+
+── 3. RODAR O SERVIDOR ─────────────────────────────────────────────
+
+  java -jar target\adivinhacao-0.0.1-SNAPSHOT.jar
+
+  (Linux/Mac: barras normais: target/adivinhacao-0.0.1-SNAPSHOT.jar)
+
+  O terminal fica ocupado com o log do servidor. Feche com Ctrl+C.
+
+── 4. JOGAR ────────────────────────────────────────────────────────
+
+  Na mesma maquina:
+    http://localhost:8080/jogo-animais.html   (o jogo)
+    http://localhost:8080/ranking.html        (painel do placar)
+
+  Em OUTRAS maquinas da mesma rede Wi-Fi:
+    1. Descubra o IP do servidor:
+         Windows: ipconfig     (procure "Endereco IPv4", ex: 192.168.1.22)
+         Linux:   hostname -I
+    2. No navegador de outra maquina:
+         http://<IP-DO-SERVIDOR>:8080/jogo-animais.html
+
+  IMPORTANTE: nunca abra o arquivo HTML direto do disco (duplo clique).
+  SEMPRE acesse pela URL acima — senao da erro 405.
+
+── 5. LIBERAR ACESSO PELA REDE (só no servidor) ────────────────────
+
+  Windows (PowerShell como ADMINISTRADOR):
+    New-NetFirewallRule -DisplayName "JogoAnimais 8080" -Direction Inbound `
+      -Port 8080 -Protocol TCP -Action Allow
+
+  Linux:
+    sudo ufw allow 8080/tcp
+
+── 6. RESETS ───────────────────────────────────────────────────────
+
+  Zerar so o PLACAR (mantem a arvore e animais ensinados):
+    1. Servidor rodando -> abra http://localhost:8080/h2-console
+    2. JDBC URL: jdbc:h2:file:./jogodb   |   User: sa   |   Senha: (vazia)
+    3. Rode: DELETE FROM partidas;
+
+  Zerar TUDO (placar + arvore volta ao padrao):
+    1. PARE o servidor (Ctrl+C)
+    2. Apague: jogodb.mv.db e jogodb.trace.db
+    3. Suba de novo — a arvore padrao e recriada sozinha
+
+── 7. PROBLEMAS COMUNS ─────────────────────────────────────────────
+
+  Erro 405 ao iniciar
+    -> A pagina foi aberta pelo arquivo, nao pela URL do servidor.
+       Use http://localhost:8080/jogo-animais.html
+
+  "Unable to access jarfile target/*.jar"
+    -> Use o nome completo do jar:
+       java -jar target\adivinhacao-0.0.1-SNAPSHOT.jar
+       (no Windows o * nao funciona em java -jar)
+
+  Porta 8080 em uso
+    -> Ja existe um servidor rodando. Feche ele ou mate o processo java.
+
+  Placar duplicado / ranking quebrado
+    -> Codigo velho rodando. Faca: git pull -> mvn clean package -> subir.
+
+  Restart do servidor
+    -> Ctrl+C e subir de novo. Leva ~5 segundos. A arvore e o placar
+       sobrevivem (ficam salvos no arquivo jogodb.mv.db).
+
+── 8. MONTAGEM DA EXPOSICAO (resumo) ───────────────────────────────
+
+  1. Notebook = servidor (suba ANTES de sair de casa)
+  2. Fixe/anote o IP do notebook
+  3. PCs e celulares acessam a URL do jogo via navegador
+  4. Um PC pode ficar so no painel ranking.html (deixa aberto)
+  5. 5 min antes de abrir: zere o placar (item 6)
+  6. Se a maquina errar: o visitante ensina e ganha +7 — a arvore
+     aprende AO VIVO. Isso e o momento de espetaculo.
+════════════════════════════════════════════════════════════════════
