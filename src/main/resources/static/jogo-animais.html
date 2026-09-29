@@ -329,6 +329,7 @@
     <svg class="trepadeira trepadeira-bl"><use href="#trepadeira"/></svg>
     <svg class="trepadeira trepadeira-br"><use href="#trepadeira"/></svg>
     <div class="pergaminho-eyebrow">— pergunta —</div>
+    <div id="boas-vindas" style="display:none;font-size:0.85rem;color:#2e4a1e;font-weight:700;margin-bottom:0.75rem"></div>
     <div class="pergaminho-titulo-md" id="texto-pergunta"></div>
     <div class="pergaminho-divisor">&#9670;</div>
     <div class="btn-row" style="margin-top:1.25rem">
@@ -454,6 +455,13 @@
     const data = await res.json();
     partidaId = data.partidaId;
     pontosAtual = null;
+    const bv = document.getElementById('boas-vindas');
+    if (data.jogadorRecorrente) {
+      bv.textContent = `Bem-vindo de volta, ${apelidoAtual}! Seu recorde: ${data.melhorPontos} pts`;
+      bv.style.display = 'block';
+    } else {
+      bv.style.display = 'none';
+    }
     if (data.tipo === 'pergunta') {
       document.getElementById('texto-pergunta').textContent = data.conteudo;
       mostrarTela('wrap-pergunta');

@@ -14,4 +14,7 @@ public interface PartidaRepository extends JpaRepository<Partida, String> {
            "GROUP BY p.jogador " +
            "ORDER BY MAX(p.pontos) DESC, MIN(p.criadoEm) ASC")
     List<RankingDTO> findRanking();
+
+    @Query("SELECT MAX(p.pontos) FROM Partida p WHERE p.jogador = :jogador AND p.pontos IS NOT NULL")
+    Integer findMelhorPontos(@org.springframework.data.repository.query.Param("jogador") String jogador);
 }
