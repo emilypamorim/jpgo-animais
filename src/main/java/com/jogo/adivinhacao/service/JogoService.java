@@ -120,6 +120,12 @@ public class JogoService {
     @Transactional
     public void confirmarAcerto(String partidaId) {
         Partida partida = buscarPartida(partidaId);
+        No noAtual = buscarNo(partida.getNoAtualId());
+        if (!noAtual.ehFolha()) {
+            throw new IllegalStateException(
+                    "A partida não está em uma adivinhação — não é possível confirmar."
+            );
+        }
         partida.setPontos(Math.max(0, PONTOS_MAXIMOS - partida.getPerguntasCount()));
         partidaRepository.save(partida);
     }
