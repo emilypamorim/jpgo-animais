@@ -63,7 +63,7 @@ INSERT INTO nos (id, dado, sim_id, nao_id) VALUES (64, 'Urso-panda', NULL, NULL)
 INSERT INTO nos (id, dado, sim_id, nao_id) VALUES (65, 'Tem pelagem escura e vive em florestas?', 66, 67);
 INSERT INTO nos (id, dado, sim_id, nao_id) VALUES (66, 'Urso-pardo', NULL, NULL);
 INSERT INTO nos (id, dado, sim_id, nao_id) VALUES (67, 'Hiena', NULL, NULL);
-INSERT INTO nos (id, dado, sim_id, nao_id) VALUES (68, 'É um grande mamífero africano com cascos/tromba?', 69, 78);
+INSERT INTO nos (id, dado, sim_id, nao_id) VALUES (68, 'É um grande mamífero africano?', 69, 78);
 INSERT INTO nos (id, dado, sim_id, nao_id) VALUES (69, 'Tem uma tromba longa?', 70, 71);
 INSERT INTO nos (id, dado, sim_id, nao_id) VALUES (70, 'Elefante', NULL, NULL);
 INSERT INTO nos (id, dado, sim_id, nao_id) VALUES (71, 'Tem um pescoço extremamente longo?', 72, 73);
