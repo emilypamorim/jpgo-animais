@@ -59,11 +59,23 @@
       border: 4px dashed #4a6a3a;
       padding: 2.5rem 2rem;
     }
+
+    .regras {
+      margin-top: 1.6rem;
+      font-size: clamp(9px, 1.2vw, 13px);
+      color: #8aa07a;
+      text-align: center;
+      line-height: 1.8;
+    }
   </style>
 </head>
 <body>
   <h1>&#9670; RANKING &#9670;</h1>
   <div id="ranking"><p class="vazio">Carregando...</p></div>
+
+  <p class="regras">
+    Acerto rapido: ate 14 pts &bull; Enganar a maquina e ensinar: +7 pts &bull; O placar soma todas as partidas
+  </p>
 
   <script>
     const API = '';
