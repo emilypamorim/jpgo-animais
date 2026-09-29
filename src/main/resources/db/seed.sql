@@ -13,7 +13,7 @@ INSERT INTO nos (id, dado, sim_id, nao_id) VALUES (12, 'Orca', NULL, NULL);
 INSERT INTO nos (id, dado, sim_id, nao_id) VALUES (13, 'Foca', NULL, NULL);
 INSERT INTO nos (id, dado, sim_id, nao_id) VALUES (14, 'Pode voar?', 15, 16);
 INSERT INTO nos (id, dado, sim_id, nao_id) VALUES (15, 'Morcego', NULL, NULL);
-INSERT INTO nos (id, dado, sim_id, nao_id) VALUES (16, 'É um animal doméstico?', 17, 44);
+INSERT INTO nos (id, dado, sim_id, nao_id) VALUES (16, 'Foi domesticado pelo ser humano (fazenda ou casa)?', 17, 44);
 INSERT INTO nos (id, dado, sim_id, nao_id) VALUES (17, 'É um animal de estimação comum de casa?', 18, 27);
 INSERT INTO nos (id, dado, sim_id, nao_id) VALUES (18, 'Late e é considerado o melhor amigo do homem?', 19, 20);
 INSERT INTO nos (id, dado, sim_id, nao_id) VALUES (19, 'Cachorro', NULL, NULL);
