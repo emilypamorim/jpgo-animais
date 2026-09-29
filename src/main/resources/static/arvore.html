@@ -136,6 +136,9 @@
   let caminhoIds = [];
   let escala = 1, panX = 0, panY = 0;
   let ultimaAssinatura = '';
+  let posAtuais = null;
+  let alturaSvgAtual = 0;
+  let ultimoNoCentralizado = null;
 
   function calcularLayout(mapa, raiz, espacoX, espacoY, raio) {
     let contadorFolhas = 0;
@@ -188,6 +191,8 @@
 
     const raio = 8, espacoX = 26, espacoY = 78;
     const { pos, alturaMax } = calcularLayout(mapaNos, raiz, espacoX, espacoY, raio);
+    posAtuais = pos;
+    alturaSvgAtual = (alturaMax + 2) * espacoY + 40;
 
     const noAtualId = caminhoIds.length ? caminhoIds[caminhoIds.length - 1] : null;
     const arestasAtivas = new Set();
@@ -243,14 +248,18 @@
   }
 
   function centralizarNoAtual() {
-    if (!caminhoIds.length || !posicoes) return;
-    const p = posicoes[caminhoIds[caminhoIds.length - 1]];
+    if (!caminhoIds.length || !posAtuais) return;
+    const noId = caminhoIds[caminhoIds.length - 1];
+    if (noId === ultimoNoCentralizado) return;
+    const p = posAtuais[noId];
     if (!p) return;
-    const svg = document.getElementById('viewport').querySelector('svg');
+    ultimoNoCentralizado = noId;
+    const svg = viewport.querySelector('svg');
     if (!svg) return;
-    escala = Math.max(mapa.clientHeight / (svg.getAttribute('height') * 1.0), 0.3);
-    panX = Math.min(mapa.clientWidth / 3 - p.x * escala, 0);
-    panY = Math.max(mapa.clientHeight / 2 - p.y * escala, mapa.clientHeight - (alturaMax + 2) * 78 * escala);
+    const larguraSvg = parseFloat(svg.getAttribute('width'));
+    escala = Math.max(0.3, Math.min(1.5, mapa.clientHeight / alturaSvgAtual));
+    panX = Math.max(mapa.clientWidth - larguraSvg * escala, Math.min(0, mapa.clientWidth / 2 - p.x * escala));
+    panY = Math.max(mapa.clientHeight - alturaSvgAtual * escala, Math.min(0, mapa.clientHeight / 2 - p.y * escala));
     aplicarTransform();
   }
 
