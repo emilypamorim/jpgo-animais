@@ -125,7 +125,7 @@ public class JogoService {
         No noAtual = buscarNo(partida.getNoAtualId());
         if (!noAtual.ehFolha()) {
             throw new IllegalStateException(
-                    "A partida não está em uma adivinhação — não é possível confirmar."
+                    "A partida não está em uma adivinhação; não é possível confirmar."
             );
         }
         partida.setPontos(Math.max(0, PONTOS_MAXIMOS - partida.getPerguntasCount()));

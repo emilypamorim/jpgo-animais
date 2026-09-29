@@ -328,7 +328,7 @@
     <svg class="trepadeira trepadeira-tr"><use href="#trepadeira"/></svg>
     <svg class="trepadeira trepadeira-bl"><use href="#trepadeira"/></svg>
     <svg class="trepadeira trepadeira-br"><use href="#trepadeira"/></svg>
-    <div class="pergaminho-eyebrow">— pergunta —</div>
+    <div class="pergaminho-eyebrow">pergunta</div>
     <div id="boas-vindas" style="display:none;font-size:0.85rem;color:#2e4a1e;font-weight:700;margin-bottom:0.75rem"></div>
     <div class="pergaminho-titulo-md" id="texto-pergunta"></div>
     <div class="pergaminho-divisor">&#9670;</div>
@@ -347,7 +347,7 @@
     <svg class="trepadeira trepadeira-tr"><use href="#trepadeira"/></svg>
     <svg class="trepadeira trepadeira-bl"><use href="#trepadeira"/></svg>
     <svg class="trepadeira trepadeira-br"><use href="#trepadeira"/></svg>
-    <div class="pergaminho-eyebrow">— meu palpite —</div>
+    <div class="pergaminho-eyebrow">meu palpite</div>
     <div class="animal-destaque" id="texto-animal"></div>
     <p class="pergaminho-sub">Acertei?</p>
     <div class="btn-row">
@@ -365,7 +365,7 @@
     <svg class="trepadeira trepadeira-tr"><use href="#trepadeira"/></svg>
     <svg class="trepadeira trepadeira-bl"><use href="#trepadeira"/></svg>
     <svg class="trepadeira trepadeira-br"><use href="#trepadeira"/></svg>
-    <div class="pergaminho-eyebrow" style="text-align:center">— vou aprender —</div>
+    <div class="pergaminho-eyebrow" style="text-align:center">vou aprender</div>
     <div class="pergaminho-titulo-md" style="text-align:center;margin-bottom:1.25rem">Em que animal voce pensou?</div>
     <div class="erro" id="erro-aprender">Preencha todos os campos.</div>
     <label class="pergaminho-label">Animal que voce pensou</label>
@@ -393,10 +393,10 @@
     <svg class="coelho" width="56" height="56"><use href="#coelho"/></svg>
     <div class="pergaminho-titulo">SABIA QUE ERA!</div>
     <div class="pergaminho-divisor">&#9670;</div>
-    <div class="pergaminho-eyebrow">— caminho na arvore —</div>
+    <div class="pergaminho-eyebrow">caminho na arvore</div>
     <div id="caminho-final" style="text-align:left;font-size:0.88rem;line-height:1.9;margin:0.5rem 0 1rem;color:#4a3520"></div>
     <div class="animal-destaque" id="seus-pontos" style="display:none"></div>
-    <div class="pergaminho-eyebrow" style="margin-top:1rem">— ranking —</div>
+    <div class="pergaminho-eyebrow" style="margin-top:1rem">ranking</div>
     <div id="ranking-final" style="text-align:left;font-size:0.95rem;line-height:1.7;margin:0.5rem 0 1rem"></div>
     <p class="pergaminho-sub">Quer tentar de novo?</p>
     <button class="btn-pixel" onclick="mostrarTela('wrap-inicial')"><span class="star">+</span> DE NOVO <span class="star">+</span></button>
@@ -507,7 +507,7 @@
       }
       container.innerHTML = '<ol style="padding-left:1.25rem;margin:0">'
         + lista.map((r, i) =>
-          `<li style="${destaque && r.jogador === destaque ? 'font-weight:700;color:#7a5020' : ''}">${r.jogador} — ${r.pontos} pts</li>`
+          `<li style="${destaque && r.jogador === destaque ? 'font-weight:700;color:#7a5020' : ''}">${r.jogador}: ${r.pontos} pts</li>`
         ).join('')
         + '</ol>';
     } catch (e) {

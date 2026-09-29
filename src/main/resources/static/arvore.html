@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Árvore Binária — Ao Vivo</title>
+  <title>Árvore Binária</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -241,7 +241,7 @@
     if (noAtualId && mapaNos[noAtualId]) {
       const no = mapaNos[noAtualId];
       const tipo = no.folha ? 'folha (chute da m&aacute;quina)' : 'n&oacute; de decis&atilde;o';
-      barra.innerHTML = `N&oacute; atual: <b>${escapar(no.dado)}</b> &mdash; ${tipo} &bull; n&oacute;s percorridos: ${Math.max(0, caminhoIds.length - 1)}`;
+      barra.innerHTML = `N&oacute; atual: <b>${escapar(no.dado)}</b> (${tipo}) &bull; n&oacute;s percorridos: ${Math.max(0, caminhoIds.length - 1)}`;
     } else {
       barra.innerHTML = 'Aguardando um jogador... a &aacute;rvore inteira est&aacute; vis&iacute;vel: cada galho &eacute; um caminho poss&iacute;vel.';
     }
