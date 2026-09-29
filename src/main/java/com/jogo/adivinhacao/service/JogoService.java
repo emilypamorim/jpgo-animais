@@ -8,45 +8,62 @@ import com.jogo.adivinhacao.model.Partida;
 import com.jogo.adivinhacao.repository.NoRepository;
 import com.jogo.adivinhacao.repository.PartidaRepository;
 import jakarta.annotation.PostConstruct;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.support.EncodedResource;
+import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.sql.DataSource;
+import java.nio.charset.StandardCharsets;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 @Service
 public class JogoService {
 
     private final NoRepository noRepository;
     private final PartidaRepository partidaRepository;
+    private final DataSource dataSource;
 
     private Long raizGlobalId;
 
-    public JogoService(NoRepository noRepository, PartidaRepository partidaRepository) {
+    public JogoService(NoRepository noRepository, PartidaRepository partidaRepository, DataSource dataSource) {
         this.noRepository = noRepository;
         this.partidaRepository = partidaRepository;
+        this.dataSource = dataSource;
     }
 
     @PostConstruct
-    @Transactional
     public void inicializarArvoreGlobal() {
         long total = noRepository.count();
 
         if (total > 0) {
-            raizGlobalId = noRepository.findAll()
-                    .stream()
-                    .mapToLong(No::getId)
-                    .min()
-                    .getAsLong();
+            raizGlobalId = buscarRaizId();
             return;
         }
 
-        No cachorro = noRepository.save(new No("Cachorro"));
-        No gato = noRepository.save(new No("Gato"));
+        try (Connection conn = dataSource.getConnection()) {
+            ScriptUtils.executeSqlScript(conn,
+                    new EncodedResource(new ClassPathResource("db/seed.sql"), StandardCharsets.UTF_8),
+                    true, false,
+                    ScriptUtils.DEFAULT_COMMENT_PREFIX,
+                    ScriptUtils.DEFAULT_STATEMENT_SEPARATOR,
+                    ScriptUtils.DEFAULT_BLOCK_COMMENT_START_DELIMITER,
+                    ScriptUtils.DEFAULT_BLOCK_COMMENT_END_DELIMITER);
+        } catch (SQLException e) {
+            throw new IllegalStateException("Falha ao carregar seed da árvore", e);
+        }
 
-        No raiz = new No("O animal que você pensou late?");
-        raiz.setSimId(cachorro.getId());
-        raiz.setNaoId(gato.getId());
-        raiz = noRepository.save(raiz);
+        raizGlobalId = buscarRaizId();
+    }
 
-        raizGlobalId = raiz.getId();
+    private Long buscarRaizId() {
+        return noRepository.findAll()
+                .stream()
+                .mapToLong(No::getId)
+                .min()
+                .getAsLong();
     }
 
     @Transactional

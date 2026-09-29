@@ -211,4 +211,4 @@ INSERT INTO nos (id, dado, sim_id, nao_id) VALUES (213, 'Iguana-verde', NULL, NU
 INSERT INTO nos (id, dado, sim_id, nao_id) VALUES (211, 'Parece uma cobra mas é lagarto?', 42, 43);
 INSERT INTO nos (id, dado, sim_id, nao_id) VALUES (42, 'Cobra-de-vidro', NULL, NULL);
 INSERT INTO nos (id, dado, sim_id, nao_id) VALUES (43, 'Anfisbena', NULL, NULL);
-ALTER SEQUENCE nos_seq RESTART WITH 214;
+ALTER TABLE nos ALTER COLUMN id RESTART WITH 214;
