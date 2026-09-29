@@ -13,5 +13,5 @@ public class RankingDTO {
     }
 
     public String getJogador() { return jogador; }
-    public Integer getPontos() { return pontos; }
+    public Long getPontos() { return pontos; }
 }
