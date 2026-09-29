@@ -139,7 +139,7 @@ INSERT INTO nos (id, dado, sim_id, nao_id) VALUES (166, 'É o animal mais rápid
 INSERT INTO nos (id, dado, sim_id, nao_id) VALUES (167, 'Falcão-peregrino', NULL, NULL);
 INSERT INTO nos (id, dado, sim_id, nao_id) VALUES (168, 'É preto com cabeça careca?', 169, 116);
 INSERT INTO nos (id, dado, sim_id, nao_id) VALUES (169, 'Urubu', NULL, NULL);
-INSERT INTO nos (id, dado, sim_id, nao_id) VALUES (116, 'Carcará', NULL, NULL);
+INSERT INTO nos (id, dado, sim_id, nao_id) VALUES (116, 'Gavião', NULL, NULL);
 INSERT INTO nos (id, dado, sim_id, nao_id) VALUES (170, 'É uma ave colorida de grande porte?', 171, 175);
 INSERT INTO nos (id, dado, sim_id, nao_id) VALUES (171, 'Tem um bico gigante e colorido?', 172, 173);
 INSERT INTO nos (id, dado, sim_id, nao_id) VALUES (172, 'Tucano', NULL, NULL);
