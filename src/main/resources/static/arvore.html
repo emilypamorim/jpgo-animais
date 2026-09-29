@@ -3,214 +3,325 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Árvore de Decisão — Ao Vivo</title>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+  <title>Árvore Binária — Ao Vivo</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'Nunito', sans-serif;
       background: linear-gradient(160deg, #1a2e1a 0%, #102010 100%);
-      min-height: 100vh;
       color: #f5e9c8;
+      font-family: 'Segoe UI', 'Nunito', sans-serif;
+      height: 100vh;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      padding: 2rem 1rem;
+      overflow: hidden;
     }
 
-    h1 {
-      font-family: 'Press Start 2P', monospace;
-      font-size: clamp(12px, 2.2vw, 20px);
-      color: #d4a855;
-      text-shadow: 3px 3px 0 #7a5020;
-      text-align: center;
-      margin-bottom: 0.75rem;
-    }
-
-    #jogador {
-      font-weight: 800;
-      font-size: clamp(14px, 2vw, 20px);
-      color: #a8d08a;
-      margin-bottom: 0.4rem;
-      min-height: 1.5em;
-    }
-
-    #stats {
-      font-size: clamp(11px, 1.4vw, 14px);
-      color: #b8c4a0;
-      background: #243c24;
-      border: 2px solid #4a6a3a;
-      padding: 0.5rem 1.2rem;
-      border-radius: 6px;
-      margin-bottom: 1.5rem;
-    }
-
-    #fluxograma {
-      width: min(92vw, 640px);
+    header {
       display: flex;
-      flex-direction: column;
-      align-items: center;
+      align-items: baseline;
+      gap: 1.5rem;
+      padding: 0.8rem 1.4rem;
+      background: rgba(0,0,0,0.35);
+      border-bottom: 2px solid #2e4a2e;
+      flex-wrap: wrap;
     }
 
-    .no {
-      background: #f5e9c8;
-      color: #2e1a08;
-      border: 4px solid #b8843a;
-      border-radius: 8px;
-      box-shadow: 5px 5px 0 rgba(0,0,0,0.45);
-      padding: 0.9rem 1.3rem;
-      max-width: 560px;
-      text-align: center;
-      font-weight: 600;
-      font-size: clamp(13px, 1.8vw, 17px);
-      animation: aparece 0.35s ease-out;
-    }
+    h1 { font-size: 1.15rem; color: #d4a855; letter-spacing: 2px; }
+    #jogador { font-weight: 800; color: #a8d08a; min-height: 1.3em; }
+    #stats { font-size: 0.85rem; color: #b8c4a0; }
 
-    .no.folha {
-      background: #3a8c1e;
-      color: #f0f8e0;
-      border-color: #1e5a0a;
-      box-shadow: 0 0 24px rgba(90,174,48,0.65), 5px 5px 0 rgba(0,0,0,0.45);
-      font-family: 'Press Start 2P', monospace;
-      font-size: clamp(11px, 1.6vw, 14px);
-      line-height: 1.8;
-    }
-
-    .no.ultimo {
-      border-color: #d4a855;
-      box-shadow: 0 0 18px rgba(212,168,85,0.7), 5px 5px 0 rgba(0,0,0,0.45);
-    }
-
-    .conector {
+    #legenda {
+      margin-left: auto;
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      height: 58px;
-      justify-content: center;
-      animation: aparece 0.35s ease-out;
-    }
-
-    .rotulo {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 10px;
-      padding: 4px 10px;
-      border-radius: 4px;
-      margin-bottom: 2px;
-    }
-
-    .sim  { background: #2e6a12; color: #d8f0c0; }
-    .nao  { background: #8b2020; color: #f5d8d8; }
-
-    .linha-vertical {
-      width: 4px;
-      flex: 1;
-      background: #d4a855;
-      box-shadow: 0 0 6px rgba(212,168,85,0.5);
-    }
-
-    .ponta {
-      width: 0; height: 0;
-      border-left: 8px solid transparent;
-      border-right: 8px solid transparent;
-      border-top: 10px solid #d4a855;
-    }
-
-    .vazio {
-      font-size: clamp(13px, 1.8vw, 17px);
-      line-height: 2;
-      text-align: center;
-      color: #b8c4a0;
-      background: #243c24;
-      border: 4px dashed #4a6a3a;
-      padding: 2.5rem 2rem;
-    }
-
-    .rodape {
-      margin-top: 1.5rem;
-      font-size: clamp(10px, 1.3vw, 13px);
+      gap: 1rem;
+      font-size: 0.78rem;
       color: #8aa07a;
-      text-align: center;
-      line-height: 1.8;
     }
+    .legenda-item { display: flex; align-items: center; gap: 5px; }
+    .bola { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+    .bola-percorrida { background: #3a8c1e; }
+    .bola-atual { background: #d4a855; }
+    .bola-futura { background: #4a5a4a; }
 
-    @keyframes aparece {
-      from { opacity: 0; transform: translateY(8px); }
-      to   { opacity: 1; transform: translateY(0); }
+    #mapa { flex: 1; position: relative; overflow: hidden; cursor: grab; }
+    #mapa:active { cursor: grabbing; }
+
+    #viewport { position: absolute; transform-origin: 0 0; transition: transform 0.4s ease; }
+
+    svg text { user-select: none; }
+
+    .no-futuro { fill: #4a5a4a; stroke: #2e3a2e; stroke-width: 1.5; }
+    .no-percorrido { fill: #3a8c1e; stroke: #1e5a0a; stroke-width: 1.5; }
+    .no-atual { fill: #d4a855; stroke: #8a6020; stroke-width: 2.5; }
+
+    .aresta { stroke: #3a4a3a; stroke-width: 1.5; fill: none; }
+    .aresta.ativa { stroke: #d4a855; stroke-width: 3; }
+
+    .rotulo-aresta { font-size: 11px; fill: #6a7a6a; font-weight: 700; }
+    .rotulo-aresta.ativa-sim { fill: #a8d08a; font-size: 13px; }
+    .rotulo-aresta.ativa-nao { fill: #e0a0a0; font-size: 13px; }
+
+    .nivel-label { font-size: 11px; fill: #5a6a5a; }
+
+    #no-atual-barra {
+      background: rgba(0,0,0,0.4);
+      border-top: 2px solid #2e4a2e;
+      padding: 0.7rem 1.4rem;
+      font-size: 0.95rem;
+      min-height: 2.6em;
+      color: #f5e9c8;
+    }
+    #no-atual-barra b { color: #d4a855; }
+
+    .controles {
+      position: absolute;
+      bottom: 70px;
+      right: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 5;
+    }
+    .controles button {
+      background: #243c24;
+      color: #d4a855;
+      border: 2px solid #4a6a3a;
+      border-radius: 6px;
+      width: 38px; height: 34px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .controles button:hover { background: #2e4a2e; }
+
+    #carregando {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #b8c4a0;
+      font-size: 1.1rem;
+      z-index: 2;
+      background: transparent;
     }
   </style>
 </head>
 <body>
-  <h1>&#9670; A &Aacute;RVORE EST&Aacute; PENSANDO &#9670;</h1>
-  <div id="jogador"></div>
-  <div id="stats"></div>
-  <div id="fluxograma"><p class="vazio">Conectando ao servidor...</p></div>
-  <p class="rodape">Cada caixa &eacute; um <b>n&oacute;</b> da &aacute;rvore bin&aacute;ria.<br>
-  SIM desce um galho, N&Atilde;O desce outro. A folha dourada &eacute; o chute da m&aacute;quina.</p>
+  <header>
+    <h1>&#9670; A &Aacute;RVORE BIN&Aacute;RIA &#9670;</h1>
+    <span id="jogador"></span>
+    <span id="stats"></span>
+    <div id="legenda">
+      <span class="legenda-item"><span class="bola bola-percorrida"></span> percorrido</span>
+      <span class="legenda-item"><span class="bola bola-atual"></span> n&oacute; atual</span>
+      <span class="legenda-item"><span class="bola bola-futura"></span> n&atilde;o explorado</span>
+    </div>
+  </header>
+
+  <div id="mapa">
+    <div id="viewport"></div>
+    <div class="controles">
+      <button onclick="zoom(1.4)">+</button>
+      <button onclick="zoom(0.7)">&minus;</button>
+      <button onclick="fit()" title="Ajustar">&#9635;</button>
+    </div>
+    <div id="carregando">Desenhando a &aacute;rvore...</div>
+  </div>
+
+  <div id="no-atual-barra">Aguardando um jogador...</div>
 
 <script>
+  let nos = null;
+  let caminhoIds = [];
+  let escala = 1, panX = 0, panY = 0;
   let ultimaAssinatura = '';
 
-  async function atualizar() {
-    try {
-      const [resArvore, resAtiva] = await Promise.all([
-        fetch('/arvore'),
-        fetch('/partida/ativa')
-      ]);
-      const arvore = await resArvore.json();
-      const ativa = await resAtiva.json();
+  function calcularLayout(mapa, raiz, espacoX, espacoY, raio) {
+    let contadorFolhas = 0;
+    let alturaMax = 0;
+    const pos = {};
 
-      const mapa = {};
-      let folhas = 0;
-      for (const n of arvore) {
-        mapa[n.id] = n;
-        if (n.folha) folhas++;
+    function visitar(id, profundidade) {
+      if (profundidade > alturaMax) alturaMax = profundidade;
+      const no = mapa[id];
+      if (!no) return null;
+
+      if (no.folha) {
+        const p = { x: contadorFolhas * espacoX + raio, y: profundidade * espacoY + raio };
+        pos[id] = p;
+        contadorFolhas++;
+        return p;
       }
 
-      const assinatura = ativa.jogador + '|' + (ativa.passos || []).length + '|' + arvore.length;
-      document.getElementById('stats').textContent =
-        `${arvore.length} nós no total • ${folhas} animais • profundidade atual: ${Math.max(0, (ativa.passos || []).length - 1)}`;
+      const esq = (no.simId && mapa[no.simId]) ? visitar(no.simId, profundidade + 1) : null;
+      const dir = (no.naoId && mapa[no.naoId]) ? visitar(no.naoId, profundidade + 1) : null;
 
-      if (assinatura === ultimaAssinatura) return;
-      ultimaAssinatura = assinatura;
+      let x;
+      if (esq && dir) x = (esq.x + dir.x) / 2;
+      else if (esq) x = esq.x;
+      else if (dir) x = dir.x;
+      else x = contadorFolhas * espacoX;
 
-      const jogador = document.getElementById('jogador');
-      const fluxo = document.getElementById('fluxograma');
+      const p = { x, y: profundidade * espacoY + raio };
+      pos[id] = p;
+      return p;
+    }
 
-      if (!ativa.jogador || !(ativa.passos || []).length) {
-        jogador.textContent = '';
-        fluxo.innerHTML = '<p class="vazio">Aguardando um jogador...<br>Pense em um animal e comece no jogo!</p>';
-        return;
+    if (raiz) visitar(raiz.id, 0);
+    return { pos, alturaMax };
+  }
+
+  function desenhar() {
+    const mapaNos = {};
+    let raiz = null;
+    const filhos = new Set();
+    for (const n of nos) {
+      mapaNos[n.id] = n;
+      if (n.simId) filhos.add(n.simId);
+      if (n.naoId) filhos.add(n.naoId);
+    }
+    for (const n of nos) {
+      if (!filhos.has(n.id)) { raiz = n; break; }
+    }
+    if (!raiz) return;
+
+    const raio = 8, espacoX = 26, espacoY = 78;
+    const { pos, alturaMax } = calcularLayout(mapaNos, raiz, espacoX, espacoY, raio);
+
+    const noAtualId = caminhoIds.length ? caminhoIds[caminhoIds.length - 1] : null;
+    const arestasAtivas = new Set();
+    for (let i = 0; i + 1 < caminhoIds.length; i++) {
+      arestasAtivas.add(caminhoIds[i] + '-' + caminhoIds[i + 1]);
+    }
+
+    let linhas = '', rotulos = '', circulos = '', niveis = '';
+    for (let d = 0; d <= alturaMax; d++) {
+      niveis += `<text class="nivel-label" x="2" y="${d * espacoY + raio + 4}">nivel ${d}</text>`;
+    }
+
+    for (const n of nos) {
+      const p = pos[n.id];
+      if (!p) continue;
+
+      if (n.simId && pos[n.simId]) {
+        const f = pos[n.simId];
+        const ativa = arestasAtivas.has(n.id + '-' + n.simId);
+        linhas += `<line class="aresta${ativa ? ' ativa' : ''}" x1="${p.x}" y1="${p.y + raio}" x2="${f.x}" y2="${f.y - raio}"/>`;
+        rotulos += `<text class="rotulo-aresta${ativa ? ' ativa-sim' : ''}" x="${(p.x + f.x) / 2 + 5}" y="${(p.y + f.y) / 2}">S</text>`;
       }
-
-      jogador.textContent = `Jogando agora: ${ativa.jogador}`;
-
-      let html = '';
-      const passos = ativa.passos;
-      for (let i = 0; i < passos.length; i++) {
-        const no = mapa[passos[i].noId];
-        if (!no) continue;
-        if (i > 0) {
-          const r = passos[i].resposta === 's' ? 's' : 'n';
-          html += `<div class="conector"><span class="rotulo ${r === 's' ? 'sim' : 'nao'}">${r === 's' ? 'SIM' : 'NÃO'}</span><div class="linha-vertical"></div><div class="ponta"></div></div>`;
-        }
-        const classes = 'no' + (no.folha ? ' folha' : '');
-        html += `<div class="${classes}" id="no-${i}">${escapar(no.dado)}</div>`;
+      if (n.naoId && pos[n.naoId]) {
+        const f = pos[n.naoId];
+        const ativa = arestasAtivas.has(n.id + '-' + n.naoId);
+        linhas += `<line class="aresta${ativa ? ' ativa' : ''}" x1="${p.x}" y1="${p.y + raio}" x2="${f.x}" y2="${f.y - raio}"/>`;
+        rotulos += `<text class="rotulo-aresta${ativa ? ' ativa-nao' : ''}" x="${(p.x + f.x) / 2 + 5}" y="${(p.y + f.y) / 2}">N</text>`;
       }
-      fluxo.innerHTML = html;
+    }
 
-      const ultimo = document.getElementById('no-' + (passos.length - 1));
-      if (ultimo) ultimo.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    } catch (e) {
-      document.getElementById('fluxograma').innerHTML =
-        '<p class="vazio">Servidor indisponível.<br>Tentando novamente...</p>';
+    for (const n of nos) {
+      const p = pos[n.id];
+      if (!p) continue;
+      let classe = 'no-futuro';
+      if (n.id === noAtualId) classe = 'no-atual';
+      else if (caminhoIds.includes(n.id)) classe = 'no-percorrido';
+      circulos += `<circle class="${classe}" cx="${p.x}" cy="${p.y}" r="${raio}"><title>${escapar(n.dado)}</title></circle>`;
+    }
+
+    const largura = (nos.filter(n => n.folha).length + 2) * espacoX + 60;
+    const alturaSvg = (alturaMax + 2) * espacoY + 40;
+    const svg = `<svg width="${largura}" height="${alturaSvg}" xmlns="http://www.w3.org/2000/svg">${linhas}${rotulos}${niveis}${circulos}</svg>`;
+    document.getElementById('viewport').innerHTML = svg;
+
+    const barra = document.getElementById('no-atual-barra');
+    if (noAtualId && mapaNos[noAtualId]) {
+      const no = mapaNos[noAtualId];
+      const tipo = no.folha ? 'folha (chute da m&aacute;quina)' : 'n&oacute; de decis&atilde;o';
+      barra.innerHTML = `N&oacute; atual: <b>${escapar(no.dado)}</b> &mdash; ${tipo} &bull; n&oacute;s percorridos: ${Math.max(0, caminhoIds.length - 1)}`;
+    } else {
+      barra.innerHTML = 'Aguardando um jogador... a &aacute;rvore inteira est&aacute; vis&iacute;vel: cada galho &eacute; um caminho poss&iacute;vel.';
     }
   }
 
-  function escapar(texto) {
-    const div = document.createElement('div');
-    div.textContent = texto;
-    return div.innerHTML;
+  function centralizarNoAtual() {
+    if (!caminhoIds.length || !posicoes) return;
+    const p = posicoes[caminhoIds[caminhoIds.length - 1]];
+    if (!p) return;
+    const svg = document.getElementById('viewport').querySelector('svg');
+    if (!svg) return;
+    escala = Math.max(mapa.clientHeight / (svg.getAttribute('height') * 1.0), 0.3);
+    panX = Math.min(mapa.clientWidth / 3 - p.x * escala, 0);
+    panY = Math.max(mapa.clientHeight / 2 - p.y * escala, mapa.clientHeight - (alturaMax + 2) * 78 * escala);
+    aplicarTransform();
+  }
+
+  function escapar(t) {
+    const d = document.createElement('div');
+    d.textContent = t;
+    return d.innerHTML;
+  }
+
+  const mapa = document.getElementById('mapa');
+  const viewport = document.getElementById('viewport');
+
+  function aplicarTransform() {
+    viewport.style.transform = `translate(${panX}px, ${panY}px) scale(${escala})`;
+  }
+
+  function zoom(fator) {
+    escala = Math.min(4, Math.max(0.1, escala * fator));
+    aplicarTransform();
+  }
+
+  function fit() {
+    const svg = viewport.querySelector('svg');
+    if (!svg || !nos) return;
+    escala = Math.min(
+      mapa.clientWidth / parseFloat(svg.getAttribute('width')),
+      mapa.clientHeight / svg.getAttribute('height'),
+      1.2
+    );
+    escala = Math.max(escala, 0.1);
+    panX = 0;
+    panY = 0;
+    aplicarTransform();
+  }
+
+  let arrastando = null;
+  mapa.addEventListener('mousedown', e => {
+    arrastando = { x: e.clientX, y: e.clientY, panX, panY };
+  });
+  window.addEventListener('mousemove', e => {
+    if (!arrastando) return;
+    panX = arrastando.panX + (e.clientX - arrastando.x);
+    panY = arrastando.panY + (e.clientY - arrastando.y);
+    aplicarTransform();
+  });
+  window.addEventListener('mouseup', () => { arrastando = null; });
+  mapa.addEventListener('wheel', e => {
+    e.preventDefault();
+    zoom(e.deltaY < 0 ? 1.15 : 1 / 1.15);
+  }, { passive: false });
+
+  async function atualizar() {
+    try {
+      const [listaNos, ativa] = await Promise.all([
+        fetch('/arvore').then(r => r.json()),
+        fetch('/partida/ativa').then(r => r.json())
+      ]);
+      nos = listaNos;
+      caminhoIds = (ativa.passos || []).map(p => p.noId);
+
+      document.getElementById('jogador').textContent =
+        ativa.jogador ? `Jogando agora: ${ativa.jogador}` : '';
+      document.getElementById('stats').textContent =
+        `${nos.length} nós • ${nos.filter(n => n.folha).length} animais • profundidade: ${Math.max(0, caminhoIds.length - 1)}`;
+
+      desenhar();
+      centralizarNoAtual();
+      document.getElementById('carregando').style.display = 'none';
+    } catch (e) {
+      document.getElementById('no-atual-barra').textContent = 'Servidor indisponível. Tentando novamente...';
+    }
   }
 
   atualizar();

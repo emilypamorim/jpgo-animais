@@ -29,7 +29,7 @@ public class ArvoreController {
     @GetMapping("/arvore")
     public List<NoDTO> arvore() {
         return noRepository.findAll().stream()
-                .map(n -> new NoDTO(n.getId(), n.getDado(), n.ehFolha()))
+                .map(n -> new NoDTO(n.getId(), n.getDado(), n.ehFolha(), n.getSimId(), n.getNaoId()))
                 .toList();
     }
 
