@@ -22,6 +22,9 @@ import java.sql.SQLException;
 @Service
 public class JogoService {
 
+    private static final int PONTOS_MAXIMOS = 15;
+    private static final int PONTOS_ENSINAR = 7;
+
     private final NoRepository noRepository;
     private final PartidaRepository partidaRepository;
     private final DataSource dataSource;
@@ -103,12 +106,19 @@ public class JogoService {
         Integer pontos = null;
         String tipo = proximo.ehFolha() ? "adivinhacao" : "pergunta";
         if (proximo.ehFolha()) {
-            pontos = Math.max(0, 15 - partida.getPerguntasCount());
-            partida.setPontos(pontos);
+            // Pontos provisórios: só entram no placar quando o jogador confirma o acerto
+            pontos = Math.max(0, PONTOS_MAXIMOS - partida.getPerguntasCount());
         }
         partidaRepository.save(partida);
 
         return new RespostaJogoDTO(tipo, proximo.getDado(), pontos);
+    }
+
+    @Transactional
+    public void confirmarAcerto(String partidaId) {
+        Partida partida = buscarPartida(partidaId);
+        partida.setPontos(Math.max(0, PONTOS_MAXIMOS - partida.getPerguntasCount()));
+        partidaRepository.save(partida);
     }
 
 
@@ -147,7 +157,8 @@ public class JogoService {
 
         noRepository.save(folhaErro);
 
-        partida.setPontos(null);
+        // Ensinar (desafiar a máquina) pontua com bônus fixo
+        partida.setPontos(PONTOS_ENSINAR);
         partida.setNoAtualId(raizGlobalId);
         partidaRepository.save(partida);
     }

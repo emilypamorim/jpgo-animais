@@ -508,6 +508,7 @@
     } else {
       el.style.display = 'none';
     }
+    fetch(`${API}/partida/${partidaId}/confirmar`, { method: 'POST' }).catch(() => {});
     carregarRanking('ranking-final', apelidoAtual);
     mostrarTela('wrap-acertou');
   }

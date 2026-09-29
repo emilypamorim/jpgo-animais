@@ -31,6 +31,12 @@ public class JogoController {
         return ResponseEntity.ok(resposta);
     }
 
+    @PostMapping("/{id}/confirmar")
+    public ResponseEntity<Void> confirmarAcerto(@PathVariable String id) {
+        jogoService.confirmarAcerto(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping("/{id}/aprender")
     public ResponseEntity<Void> aprender(
             @PathVariable String id,
